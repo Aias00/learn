@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * @author liuhy
  * @since 2020/4/17
+ * 简单临时节点 释放之后会有问题
  */
 public class ZookeeperDistributeLock extends ZookeeperAbstractLock {
 
@@ -15,8 +16,8 @@ public class ZookeeperDistributeLock extends ZookeeperAbstractLock {
     @Override
     void waitLock() {
         System.out.println("获取锁资源失败,开始等待");
-        //
-        IZkDataListener iZkDataListener = new IZkDataListener() {
+        // 注册一个监听
+        IZkDataListener zkDataListener = new IZkDataListener() {
             @Override
             public void handleDataChange(String dataPath, Object data) throws Exception {
 
@@ -25,23 +26,30 @@ public class ZookeeperDistributeLock extends ZookeeperAbstractLock {
             @Override
             public void handleDataDeleted(String dataPath) throws Exception {
                 // 唤醒等待的线程
-                if (countDownLatch != null) {
+                if (null != countDownLatch) {
                     countDownLatch.countDown();
                 }
             }
         };
-        // 注册事件
-        zkClient.subscribeDataChanges(PATH, iZkDataListener);
-        if (zkClient.exists(PATH)) {
-            countDownLatch = new CountDownLatch(1);
+        // 注册事件监听
+        zkClient.subscribeDataChanges(PATH, zkDataListener);
+        try {
+            // 如果路径已经存在
+            if (zkClient.exists(PATH)) {
+                countDownLatch = new CountDownLatch(1);
+                // 等待线程被唤醒 取消此监听
+                countDownLatch.await();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
+        zkClient.unsubscribeDataChanges(PATH, zkDataListener);
     }
 
     @Override
     boolean tryLock() {
         try {
-            // 创建一个临时节点
+            // 尝试创建一个临时节点
             zkClient.createEphemeral(PATH);
             // 如果创建成功  返回true
             return true;
@@ -52,6 +60,12 @@ public class ZookeeperDistributeLock extends ZookeeperAbstractLock {
 
     @Override
     public void unlock() {
-
+        if (null != zkClient) {
+            // 删除路径
+            zkClient.delete(PATH);
+            // 释放资源
+            zkClient.close();
+            System.out.println("释放锁资源...");
+        }
     }
 }

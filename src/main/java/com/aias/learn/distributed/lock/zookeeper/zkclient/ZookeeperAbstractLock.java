@@ -14,6 +14,7 @@ public abstract class ZookeeperAbstractLock implements Lock {
     protected ZkClient zkClient = new ZkClient(CONNECTION_STRING);
 
     protected static final String PATH = "/lock";
+    protected static final String PATH2 = "/lock2";
 
     @Override
     public boolean lock() {
