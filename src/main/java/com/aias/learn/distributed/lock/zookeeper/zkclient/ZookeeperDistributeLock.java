@@ -60,13 +60,15 @@ public class ZookeeperDistributeLock extends ZookeeperAbstractLock {
     }
 
     @Override
-    public void unlock() {
-        if (null != zkClient) {
-            // 删除路径
-            zkClient.delete(PATH);
-            // 释放资源
-            zkClient.close();
-            System.out.println("释放锁资源...");
+    public boolean unlock() {
+        if (null == zkClient) {
+            return false;
         }
+        // 删除路径
+        zkClient.delete(PATH);
+        // 释放资源
+        zkClient.close();
+        System.out.println("释放锁资源...");
+        return true;
     }
 }

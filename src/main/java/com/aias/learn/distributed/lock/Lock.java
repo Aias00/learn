@@ -9,6 +9,6 @@ public interface Lock {
 
     public boolean lock();
 
-    public void unlock();
+    public boolean unlock();
 
 }

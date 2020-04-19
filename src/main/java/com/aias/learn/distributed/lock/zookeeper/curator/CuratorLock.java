@@ -60,12 +60,17 @@ public class CuratorLock extends ZookeeperAbstractLock {
     }
 
     @Override
-    public void unlock() {
+    public boolean unlock() {
+        if (null == lock) {
+            return false;
+        }
         try {
             lock.release();
             System.out.println("释放锁");
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 

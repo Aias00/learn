@@ -76,7 +76,7 @@ public class JavaApiLock implements Lock {
     public synchronized boolean lock() {
         try {
             // 创建临时有序节点
-            lockId = zooKeeper.create(ROOT_LOCKS , data, ZooDefs.Ids.OPEN_ACL_UNSAFE,
+            lockId = zooKeeper.create(ROOT_LOCKS, data, ZooDefs.Ids.OPEN_ACL_UNSAFE,
                     CreateMode.EPHEMERAL_SEQUENTIAL);
             System.out.println(Thread.currentThread().getName() + "成功创建了lock节点,节点Id:" + lockId + ",开始竞争锁");
 
@@ -117,13 +117,18 @@ public class JavaApiLock implements Lock {
     }
 
     @Override
-    public void unlock() {
+    public boolean unlock() {
         System.out.println(Thread.currentThread().getName() + "开始释放锁：" + lockId);
+        if (null == zooKeeper) {
+            return false;
+        }
         try {
             zooKeeper.delete(lockId, -1);
             System.out.println("节点：" + lockId + "被删除");
+            return true;
         } catch (InterruptedException | KeeperException e) {
             e.printStackTrace();
+            return false;
         }
     }
 }

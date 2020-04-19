@@ -58,7 +58,7 @@ public class ZookeeperDistributeLock2 extends ZookeeperAbstractLock {
     @Override
     public synchronized boolean tryLock() {
         // 如果 currentPath 为空则为第一次尝试加锁，第一次加锁赋值currentPath
-        if (StringUtils.isBlank(currentPath)) {
+        if (StringUtils.isEmpty(currentPath)) {
             // 创建一个临时顺序节点
             currentPath = this.zkClient.createEphemeralSequential(PATH + '/', "lock");
         }
@@ -78,10 +78,12 @@ public class ZookeeperDistributeLock2 extends ZookeeperAbstractLock {
     }
 
     @Override
-    public void unlock() {
-        if (null != this.zkClient) {
-            // 删除当前临时节点
-            this.zkClient.delete(currentPath);
+    public boolean unlock() {
+        if (null == this.zkClient) {
+            return false;
         }
+        // 删除当前临时节点
+        this.zkClient.delete(currentPath);
+        return true;
     }
 }
