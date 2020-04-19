@@ -1,5 +1,6 @@
 package com.aias.learn.distributed.lock.zookeeper.zkclient;
 
+import com.aias.learn.distributed.lock.zookeeper.ZookeeperAbstractLock;
 import org.I0Itec.zkclient.IZkDataListener;
 
 import java.util.concurrent.CountDownLatch;
@@ -14,7 +15,7 @@ public class ZookeeperDistributeLock extends ZookeeperAbstractLock {
     private CountDownLatch countDownLatch = null;
 
     @Override
-    void waitLock() {
+    public void waitLock() {
         System.out.println("获取锁资源失败,开始等待");
         // 注册一个监听
         IZkDataListener zkDataListener = new IZkDataListener() {
@@ -47,7 +48,7 @@ public class ZookeeperDistributeLock extends ZookeeperAbstractLock {
     }
 
     @Override
-    boolean tryLock() {
+    public synchronized boolean tryLock() {
         try {
             // 尝试创建一个临时节点
             zkClient.createEphemeral(PATH);
