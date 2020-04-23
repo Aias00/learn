@@ -14,4 +14,11 @@ public interface MessageListenerContainer {
      */
     void registerMessageListener(String messageClassName, MessageListener messageListener);
 
+    /**
+     * 有消息要通知监听者
+     *
+     * @param message 消息对象
+     */
+    void notify(final AbstractMessage message);
+
 }

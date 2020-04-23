@@ -11,7 +11,7 @@ public abstract class AbstractMessage implements Serializable {
 
     private static final long serialVersionUID = -7313600907030593631L;
 
-    private long timeStamp;
+    private long timeStamp = System.currentTimeMillis();
 
     public long getTimeStamp() {
         return timeStamp;

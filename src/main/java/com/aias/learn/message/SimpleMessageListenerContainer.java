@@ -28,8 +28,23 @@ public class SimpleMessageListenerContainer implements MessageListenerContainer 
 
     @Override
     public void registerMessageListener(String messageClassName, MessageListener messageListener) {
-        List<MessageListener> listeners = messageListenerMap.computeIfAbsent(messageClassName, k -> Lists.newArrayList());
+        List<MessageListener> listeners = messageListenerMap.computeIfAbsent(messageClassName,
+                k -> Lists.newArrayList());
         listeners.add(messageListener);
+    }
+
+    @Override
+    public void notify(final AbstractMessage message) {
+
+        List<MessageListener> listeners = messageListenerMap.get(message.getClass().getName());
+
+        if (null == listeners || listeners.isEmpty()) {
+            return;
+        }
+        for (MessageListener listener : listeners) {
+            listener.onMessage(message);
+        }
+
     }
 
 }
