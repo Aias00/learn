@@ -34,6 +34,20 @@ public class SimpleMessageListenerContainer implements MessageListenerContainer 
     }
 
     @Override
+    public void unRegisterMessageListener(String messageClassName, MessageListener messageListener) {
+
+        if (messageListenerMap.containsKey(messageClassName)) {
+
+            List<MessageListener> listeners = messageListenerMap.get(messageClassName);
+
+            if (null == listeners || listeners.isEmpty()) {
+                return;
+            }
+            listeners.remove(messageListener);
+        }
+    }
+
+    @Override
     public void notify(final AbstractMessage message) {
 
         List<MessageListener> listeners = messageListenerMap.get(message.getClass().getName());

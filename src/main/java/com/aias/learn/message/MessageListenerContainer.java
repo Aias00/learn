@@ -14,6 +14,8 @@ public interface MessageListenerContainer {
      */
     void registerMessageListener(String messageClassName, MessageListener messageListener);
 
+    void unRegisterMessageListener(String messageClassName, MessageListener messageListener);
+
     /**
      * 有消息要通知监听者
      *
