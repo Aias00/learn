@@ -1,12 +1,11 @@
 package com.aias.learn.cache;
 
 import com.google.common.collect.Maps;
-import io.netty.util.concurrent.SingleThreadEventExecutor;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -14,14 +13,16 @@ import java.util.stream.Collectors;
  * @author liuhy
  * @since 2020/4/25
  */
-public class LocalCacheImpl implements Cache {
+public class LocalCacheImpl implements Cache, Runnable {
     private static volatile LocalCacheImpl INSTANCE = null;
 
     private static Map<String, CacheObject<?>> database;
 
+    Executor executor = Executors.newSingleThreadExecutor();
 
     private LocalCacheImpl() {
         database = Maps.newConcurrentMap();
+        executor.execute(this);
     }
 
     /**
@@ -121,5 +122,22 @@ public class LocalCacheImpl implements Cache {
     @Override
     public void flushAll() {
         database.clear();
+    }
+
+    @Override
+    public void run() {
+        System.out.println("检查无效key 线程启动");
+        try {
+            TimeUnit.SECONDS.sleep(60);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        for (String key : database.keySet()) {
+            if (database.get(key).isValid()) {
+                continue;
+            }
+            database.remove(key);
+        }
+
     }
 }
