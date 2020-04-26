@@ -127,12 +127,13 @@ public class LocalCacheImpl implements Cache, Runnable {
 
     @Override
     public void run() {
-        System.out.println("检查无效key 线程启动");
+
         try {
             TimeUnit.SECONDS.sleep(60);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        System.out.println("检查无效key 线程启动");
         for (String key : database.keySet()) {
             if (database.get(key).isValid()) {
                 continue;
