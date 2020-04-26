@@ -18,10 +18,11 @@ public class LocalCacheImpl implements Cache, Runnable {
 
     private static Map<String, CacheObject<?>> database;
 
-    Executor executor = Executors.newSingleThreadExecutor();
+    Executor executor;
 
     private LocalCacheImpl() {
         database = Maps.newConcurrentMap();
+        executor = Executors.newSingleThreadExecutor();
         executor.execute(this);
     }
 
