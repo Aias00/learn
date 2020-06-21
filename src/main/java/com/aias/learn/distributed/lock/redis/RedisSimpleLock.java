@@ -91,7 +91,7 @@ public class RedisSimpleLock implements Lock {
                 }
                 try {
                     // 睡眠100毫秒之后重试
-                    TimeUnit.MICROSECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(100);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
