@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author liuhy
  * @since 2020/5/30
+ * 延时/周期线程池
  */
 public class ThreadPool {
 
