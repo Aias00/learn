@@ -1,4 +1,4 @@
-package com.aias.learn.thread;
+package com.aias.learn.juc.thread;
 
 /**
  * @author liuhy

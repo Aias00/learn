@@ -1,4 +1,4 @@
-package com.aias.learn.thread;
+package com.aias.learn.juc.thread;
 
 import java.util.concurrent.TimeUnit;
 
